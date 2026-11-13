@@ -9,13 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stoks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('bahan_id')->constrained('bahans')->onDelete('cascade');
-            $table->enum('jenis_transaksi', ['masuk', 'keluar']);
-            $table->decimal('jumlah', 10, 2);
-            $table->decimal('harga_satuan', 12, 2)->nullable();
-            $table->date('tanggal');
-            $table->text('keterangan')->nullable();
+            $table->id('id_stok');
+            // Menghubungkan id_bahan di tabel stoks ke primary key id_bahan di tabel bahans
+            $table->foreignId('id_bahan')->constrained('bahans', 'id_bahan')->onDelete('restrict');
+            $table->date('tanggal_belanja');
+            $table->decimal('jumlah_gram', 12, 2);
+            $table->bigInteger('harga_beli');
+            $table->date('tanggal_expired');
+            $table->integer('batas_notif_expired')->default(14); // Default peringatan 14 hari sebelum expired
             $table->timestamps();
         });
     }
