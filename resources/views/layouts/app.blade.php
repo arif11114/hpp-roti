@@ -24,9 +24,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <!-- Menu untuk modul Nandar nanti -->
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
-                            Stok Bahan (Segera)
+                         <a class="nav-link {{ request()->routeIs('stok-bahan.*') ? 'active fw-bold' : '' }}" href="{{ route('stok-bahan.index') }}">
+                             Stok Bahan
                         </a>
                     </li>
                 </ul>
