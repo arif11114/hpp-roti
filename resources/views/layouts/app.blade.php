@@ -17,16 +17,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <<ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('bahan.*') ? 'active fw-bold' : '' }}" href="{{ route('bahan.index') }}">
-                            Master Bahan
-                        </a>
+                        <a class="nav-link {{ request()->routeIs('satuan.*') ? 'active fw-bold' : '' }}" href="{{ route('satuan.index') }}">Master Satuan</a>
                     </li>
                     <li class="nav-item">
-                         <a class="nav-link {{ request()->routeIs('stok-bahan.*') ? 'active fw-bold' : '' }}" href="{{ route('stok-bahan.index') }}">
-                             Stok Bahan
-                        </a>
+                        <a class="nav-link {{ request()->routeIs('bahan.*') ? 'active fw-bold' : '' }}" href="{{ route('bahan.index') }}">Master Bahan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('stok-bahan.*') ? 'active fw-bold' : '' }}" href="{{ route('stok-bahan.index') }}">Stok Bahan</a>
                     </li>
                 </ul>
             </div>

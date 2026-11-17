@@ -3,71 +3,81 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bahan;
+use App\Models\Satuan;
 use Illuminate\Http\Request;
 
 class BahanController extends Controller
 {
-    // 1. Menampilkan seluruh daftar bahan (Read/View)
     public function index()
     {
-        $bahans = Bahan::orderBy('id_bahan', 'asc')->get();
+        // Ambil data bahan beserta relasi satuannya, dan hitung apakah sudah terpakai di stok_bahans
+        $bahans = Bahan::with('satuan')
+            ->withCount('stokBahans')
+            ->orderBy('nama_bahan', 'asc')
+            ->get();
+
         return view('bahan.index', compact('bahans'));
     }
 
-    // 2. Menampilkan halaman form tambah bahan baru
     public function create()
     {
-        return view('bahan.create');
+        $satuans = Satuan::orderBy('nama_satuan', 'asc')->get();
+        return view('bahan.create', compact('satuans'));
     }
 
-    // 3. Menyimpan data bahan baru ke database (Insert)
     public function store(Request $request)
     {
         $request->validate([
             'nama_bahan' => 'required|string|max:100|unique:bahans,nama_bahan',
+            'id_satuan'  => 'required|exists:satuans,id_satuan',
         ], [
             'nama_bahan.required' => 'Nama bahan wajib diisi.',
             'nama_bahan.unique'   => 'Nama bahan ini sudah terdaftar.',
+            'id_satuan.required'  => 'Satuan beli wajib dipilih.',
+            'id_satuan.exists'    => 'Satuan yang dipilih tidak valid.',
         ]);
 
         Bahan::create([
             'nama_bahan' => $request->nama_bahan,
+            'id_satuan'  => $request->id_satuan,
         ]);
 
-        return redirect()->route('bahan.index')
-                         ->with('success', 'Data bahan berhasil ditambahkan!');
+        return redirect()->route('bahan.index')->with('success', 'Master bahan berhasil ditambahkan.');
     }
 
-    // 4. Menampilkan halaman form edit bahan
     public function edit(Bahan $bahan)
     {
-        return view('bahan.edit', compact('bahan'));
+        $satuans = Satuan::orderBy('nama_satuan', 'asc')->get();
+        return view('bahan.edit', compact('bahan', 'satuans'));
     }
 
-    // 5. Menyimpan perubahan data bahan ke database (Update)
     public function update(Request $request, Bahan $bahan)
     {
         $request->validate([
             'nama_bahan' => 'required|string|max:100|unique:bahans,nama_bahan,' . $bahan->id_bahan . ',id_bahan',
+            'id_satuan'  => 'required|exists:satuans,id_satuan',
         ], [
             'nama_bahan.required' => 'Nama bahan wajib diisi.',
-            'nama_bahan.unique'   => 'Nama bahan ini sudah digunakan bahan lain.',
+            'nama_bahan.unique'   => 'Nama bahan sudah digunakan.',
+            'id_satuan.required'  => 'Satuan beli wajib dipilih.',
         ]);
 
         $bahan->update([
             'nama_bahan' => $request->nama_bahan,
+            'id_satuan'  => $request->id_satuan,
         ]);
 
-        return redirect()->route('bahan.index')
-                         ->with('success', 'Data bahan berhasil diperbarui!');
+        return redirect()->route('bahan.index')->with('success', 'Master bahan berhasil diperbarui.');
     }
 
-    // 6. Menghapus data bahan (Delete)
     public function destroy(Bahan $bahan)
     {
-        $bahan->delete();
+        // Sesuai aturan Pak Saiful: bahan yang sudah masuk transaksi stok TIDAK BOLEH dihapus
+        if ($bahan->stokBahans()->exists()) {
+            return redirect()->route('bahan.index')->with('error', 'Bahan tidak dapat dihapus karena sudah memiliki riwayat stok/transaksi.');
+        }
 
-        return redirect()->route('bahan.index')
-                         ->with('success', 'Data bahan berhasil dihapus!');
+        $bahan->delete();
+        return redirect()->route('bahan.index')->with('success', 'Master bahan berhasil dihapus.');
     }
 }
