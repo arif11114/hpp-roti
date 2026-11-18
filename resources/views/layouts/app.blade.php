@@ -9,7 +9,7 @@
 </head>
 <body class="bg-light">
 
-    <!-- Navbar Utama -->
+   <!-- Navbar Utama -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ url('/') }}">🍞 Sistem HPP Roti</a>
@@ -17,9 +17,12 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <<ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('satuan.*') ? 'active fw-bold' : '' }}" href="{{ route('satuan.index') }}">Master Satuan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('supplier.*') ? 'active fw-bold' : '' }}" href="{{ route('supplier.index') }}">Toko Pemasok</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('bahan.*') ? 'active fw-bold' : '' }}" href="{{ route('bahan.index') }}">Master Bahan</a>
