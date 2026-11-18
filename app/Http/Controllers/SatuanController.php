@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Satuan;
+use App\Models\SatuanModel;
 use Illuminate\Http\Request;
 
 class SatuanController extends Controller
 {
     public function index()
     {
-        // withCount('bahans') menghitung berapa bahan yang memakai satuan ini
-        $satuans = Satuan::withCount('bahans')->orderBy('nama_satuan', 'asc')->get();
+        $satuans = SatuanModel::withCount('bahans')->orderBy('nama_satuan', 'asc')->get();
         return view('satuan.index', compact('satuans'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('satuan.create');
+        // Tangkap URL halaman asal jika diakses lewat tombol shortcut (...)
+        $redirectTo = $request->query('redirect_to');
+        return view('satuan.create', compact('redirectTo'));
     }
 
     public function store(Request $request)
@@ -30,20 +31,27 @@ class SatuanController extends Controller
             'singkatan.required'   => 'Singkatan satuan wajib diisi (contoh: kg, L, bks).',
         ]);
 
-        Satuan::create([
+        $satuan = SatuanModel::create([
             'nama_satuan' => $request->nama_satuan,
             'singkatan'   => $request->singkatan,
         ]);
 
+        // Jika berasal dari tombol shortcut (...), kembalikan langsung ke form asal!
+        if ($request->filled('redirect_to')) {
+            return redirect($request->redirect_to)
+                ->with('success', 'Satuan "' . $satuan->nama_satuan . '" berhasil ditambahkan.')
+                ->with('selected_satuan', $satuan->id_satuan);
+        }
+
         return redirect()->route('satuan.index')->with('success', 'Data satuan berhasil ditambahkan.');
     }
 
-    public function edit(Satuan $satuan)
+    public function edit(SatuanModel $satuan)
     {
         return view('satuan.edit', compact('satuan'));
     }
 
-    public function update(Request $request, Satuan $satuan)
+    public function update(Request $request, SatuanModel $satuan)
     {
         $request->validate([
             'nama_satuan' => 'required|string|max:50|unique:satuans,nama_satuan,' . $satuan->id_satuan . ',id_satuan',
@@ -62,9 +70,8 @@ class SatuanController extends Controller
         return redirect()->route('satuan.index')->with('success', 'Data satuan berhasil diperbarui.');
     }
 
-    public function destroy(Satuan $satuan)
+    public function destroy(SatuanModel $satuan)
     {
-        // Kunci penghapusan jika satuan sudah dipakai oleh Master Bahan
         if ($satuan->bahans()->exists()) {
             return redirect()->route('satuan.index')->with('error', 'Satuan tidak dapat dihapus karena sedang digunakan pada Master Bahan.');
         }

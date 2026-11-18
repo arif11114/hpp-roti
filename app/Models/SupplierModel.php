@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class Supplier extends Model
+class SupplierModel extends Model
 {
     use HasUuids;
 
@@ -18,6 +18,6 @@ class Supplier extends Model
 
     public function stokBahans()
     {
-        return $this->hasMany(StokBahan::class, 'id_supplier', 'id_supplier');
+        return $this->hasMany(StokBahanModel::class, 'id_supplier', 'id_supplier');
     }
 }

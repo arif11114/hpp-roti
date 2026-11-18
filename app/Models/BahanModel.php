@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class Bahan extends Model
+class BahanModel extends Model
 {
     use HasUuids;
 
@@ -16,15 +16,13 @@ class Bahan extends Model
 
     protected $fillable = ['id_satuan', 'nama_bahan'];
 
-    // Relasi: Bahan milik satu satuan
     public function satuan()
     {
-        return $this->belongsTo(Satuan::class, 'id_satuan', 'id_satuan');
+        return $this->belongsTo(SatuanModel::class, 'id_satuan', 'id_satuan');
     }
 
-    // Relasi: Bahan bisa memiliki banyak riwayat stok (untuk cek kunci hapus)
     public function stokBahans()
     {
-        return $this->hasMany(StokBahan::class, 'id_bahan', 'id_bahan');
+        return $this->hasMany(StokBahanModel::class, 'id_bahan', 'id_bahan');
     }
 }

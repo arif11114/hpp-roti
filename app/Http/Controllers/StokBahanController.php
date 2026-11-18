@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StokBahan;
-use App\Models\Bahan;
-use App\Models\Supplier;
+use App\Models\StokBahanModel;
+use App\Models\BahanModel;
+use App\Models\SupplierModel;
 use Illuminate\Http\Request;
 
 class StokBahanController extends Controller
 {
     public function index()
     {
-        $stokBahans = StokBahan::with(['bahan.satuan', 'supplier'])
+        $stokBahans = StokBahanModel::with(['bahan.satuan', 'supplier'])
             ->latest('tanggal_transaksi')
             ->get();
 
@@ -20,8 +20,8 @@ class StokBahanController extends Controller
 
     public function create()
     {
-        $bahans = Bahan::with('satuan')->orderBy('nama_bahan', 'asc')->get();
-        $suppliers = Supplier::orderBy('nama_supplier', 'asc')->get();
+        $bahans = BahanModel::with('satuan')->orderBy('nama_bahan', 'asc')->get();
+        $suppliers = SupplierModel::orderBy('nama_supplier', 'asc')->get();
 
         return view('stok_bahan.create', compact('bahans', 'suppliers'));
     }
@@ -47,20 +47,20 @@ class StokBahanController extends Controller
             'harga_beli.required'              => 'Harga beli wajib diisi.',
         ]);
 
-        StokBahan::create($request->all());
+        StokBahanModel::create($request->all());
 
         return redirect()->route('stok-bahan.index')->with('success', 'Data stok bahan berhasil ditambahkan!');
     }
 
-    public function edit(StokBahan $stokBahan)
+    public function edit(StokBahanModel $stokBahan)
     {
-        $bahans = Bahan::with('satuan')->orderBy('nama_bahan', 'asc')->get();
-        $suppliers = Supplier::orderBy('nama_supplier', 'asc')->get();
+        $bahans = BahanModel::with('satuan')->orderBy('nama_bahan', 'asc')->get();
+        $suppliers = SupplierModel::orderBy('nama_supplier', 'asc')->get();
 
         return view('stok_bahan.edit', compact('stokBahan', 'bahans', 'suppliers'));
     }
 
-    public function update(Request $request, StokBahan $stokBahan)
+    public function update(Request $request, StokBahanModel $stokBahan)
     {
         $request->validate([
             'id_bahan'            => 'required|exists:bahans,id_bahan',
@@ -86,7 +86,7 @@ class StokBahanController extends Controller
         return redirect()->route('stok-bahan.index')->with('success', 'Data stok bahan berhasil diperbarui!');
     }
 
-    public function destroy(StokBahan $stokBahan)
+    public function destroy(StokBahanModel $stokBahan)
     {
         $stokBahan->delete();
 

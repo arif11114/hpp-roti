@@ -8,6 +8,13 @@
                 <h5 class="mb-0 fw-bold">Edit Bahan Baku</h5>
             </div>
             <div class="card-body">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
                 <form action="{{ route('bahan.update', $bahan->id_bahan) }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -21,17 +28,20 @@
 
                     <div class="mb-3">
                         <label for="id_satuan" class="form-label">Satuan Beli</label>
-                        <select name="id_satuan" id="id_satuan" class="form-select @error('id_satuan') is-invalid @enderror" required>
-                            <option value="">-- Pilih Satuan --</option>
-                            @foreach($satuans as $satuan)
-                                <option value="{{ $satuan->id_satuan }}" {{ old('id_satuan', $bahan->id_satuan) == $satuan->id_satuan ? 'selected' : '' }}>
-                                    {{ $satuan->nama_satuan }} ({{ $satuan->singkatan }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('id_satuan')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <div class="input-group">
+                            <select name="id_satuan" id="id_satuan" class="form-select @error('id_satuan') is-invalid @enderror" required>
+                                <option value="">-- Pilih Satuan --</option>
+                                @foreach($satuans as $satuan)
+                                    <option value="{{ $satuan->id_satuan }}" {{ old('id_satuan', session('selected_satuan', $bahan->id_satuan)) == $satuan->id_satuan ? 'selected' : '' }}>
+                                        {{ $satuan->nama_satuan }} ({{ $satuan->singkatan }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            <a href="{{ route('satuan.create', ['redirect_to' => url()->current()]) }}" class="btn btn-outline-secondary fw-bold" title="Tambah Satuan Baru">...</a>
+                            @error('id_satuan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="d-flex justify-content-between">

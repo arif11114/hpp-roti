@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class StokBahan extends Model
+class StokBahanModel extends Model
 {
     use HasUuids;
 
@@ -27,11 +27,11 @@ class StokBahan extends Model
 
     public function bahan()
     {
-        return $this->belongsTo(Bahan::class, 'id_bahan', 'id_bahan');
+        return $this->belongsTo(BahanModel::class, 'id_bahan', 'id_bahan');
     }
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'id_supplier', 'id_supplier');
+        return $this->belongsTo(SupplierModel::class, 'id_supplier', 'id_supplier');
     }
 }

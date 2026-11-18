@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class Satuan extends Model
+class SatuanModel extends Model
 {
     use HasUuids;
 
@@ -16,9 +16,8 @@ class Satuan extends Model
 
     protected $fillable = ['nama_satuan', 'singkatan'];
 
-    // Relasi: Satu satuan bisa dimiliki banyak bahan
     public function bahans()
     {
-        return $this->hasMany(Bahan::class, 'id_satuan', 'id_satuan');
+        return $this->hasMany(BahanModel::class, 'id_satuan', 'id_satuan');
     }
 }

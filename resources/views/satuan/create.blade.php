@@ -10,6 +10,8 @@
             <div class="card-body">
                 <form action="{{ route('satuan.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="redirect_to" value="{{ old('redirect_to', $redirectTo ?? '') }}">
+
                     <div class="mb-3">
                         <label for="nama_satuan" class="form-label">Nama Satuan</label>
                         <input type="text" name="nama_satuan" id="nama_satuan" class="form-control @error('nama_satuan') is-invalid @enderror" value="{{ old('nama_satuan') }}" placeholder="Contoh: Kilogram, Liter, Bungkus" required>
@@ -27,7 +29,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('satuan.index') }}" class="btn btn-secondary">Kembali</a>
+                        <a href="{{ $redirectTo ?? route('satuan.index') }}" class="btn btn-secondary">Kembali</a>
                         <button type="submit" class="btn btn-primary">Simpan Satuan</button>
                     </div>
                 </form>

@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Supplier;
+use App\Models\SupplierModel;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
     public function index()
     {
-        $suppliers = Supplier::withCount('stokBahans')
+        $suppliers = SupplierModel::withCount('stokBahans')
             ->orderBy('nama_supplier', 'asc')
             ->get();
 
         return view('supplier.index', compact('suppliers'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('supplier.create');
+        $redirectTo = $request->query('redirect_to');
+        return view('supplier.create', compact('redirectTo'));
     }
 
     public function store(Request $request)
@@ -33,21 +34,27 @@ class SupplierController extends Controller
             'kontak.max'             => 'Kontak maksimal 30 karakter.',
         ]);
 
-        Supplier::create([
+        $supplier = SupplierModel::create([
             'nama_supplier' => $request->nama_supplier,
             'kontak'        => $request->kontak,
             'alamat'        => $request->alamat,
         ]);
 
+        if ($request->filled('redirect_to')) {
+            return redirect($request->redirect_to)
+                ->with('success', 'Supplier "' . $supplier->nama_supplier . '" berhasil ditambahkan.')
+                ->with('selected_supplier', $supplier->id_supplier);
+        }
+
         return redirect()->route('supplier.index')->with('success', 'Master supplier berhasil ditambahkan.');
     }
 
-    public function edit(Supplier $supplier)
+    public function edit(SupplierModel $supplier)
     {
         return view('supplier.edit', compact('supplier'));
     }
 
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, SupplierModel $supplier)
     {
         $request->validate([
             'nama_supplier' => 'required|string|max:100|unique:suppliers,nama_supplier,' . $supplier->id_supplier . ',id_supplier',
@@ -68,7 +75,7 @@ class SupplierController extends Controller
         return redirect()->route('supplier.index')->with('success', 'Master supplier berhasil diperbarui.');
     }
 
-    public function destroy(Supplier $supplier)
+    public function destroy(SupplierModel $supplier)
     {
         if ($supplier->stokBahans()->exists()) {
             return redirect()->route('supplier.index')->with('error', 'Supplier tidak dapat dihapus karena sudah memiliki riwayat transaksi stok.');
