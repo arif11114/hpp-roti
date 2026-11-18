@@ -8,6 +8,13 @@
                 <h5 class="mb-0">Tambah Stok Bahan Baru</h5>
             </div>
             <div class="card-body">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -21,32 +28,39 @@
                 <form action="{{ route('stok-bahan.store') }}" method="POST">
                     @csrf
 
-                    {{-- 1. Nama Bahan & Supplier --}}
+                    {{-- 1. Nama Bahan & Supplier + Tombol Smart Redirect (...) --}}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="id_bahan" class="form-label fw-semibold">Nama Bahan <span class="text-danger">*</span></label>
-                            <select name="id_bahan" id="id_bahan" class="form-select" required>
-                                <option value="" data-satuan="Satuan">-- Pilih Bahan Baku --</option>
-                                @foreach($bahans as $bahan)
-                                    <option value="{{ $bahan->id_bahan }}"
-                                        data-satuan="{{ $bahan->satuan->singkatan ?? $bahan->satuan->nama_satuan ?? 'Unit' }}"
-                                        {{ old('id_bahan') == $bahan->id_bahan ? 'selected' : '' }}>
-                                        {{ $bahan->nama_bahan }} ({{ $bahan->satuan->singkatan ?? '-' }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="input-group">
+                                <select name="id_bahan" id="id_bahan" class="form-select" required>
+                                    <option value="" data-satuan="Satuan">-- Pilih Bahan Baku --</option>
+                                    @foreach($bahans as $bahan)
+                                        <option value="{{ $bahan->id_bahan }}"
+                                            data-satuan="{{ $bahan->satuan->singkatan ?? $bahan->satuan->nama_satuan ?? 'Unit' }}"
+                                            {{ old('id_bahan', session('selected_bahan')) == $bahan->id_bahan ? 'selected' : '' }}>
+                                            {{ $bahan->nama_bahan }} ({{ $bahan->satuan->singkatan ?? '-' }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <a href="{{ route('bahan.create', ['redirect_to' => url()->current()]) }}" class="btn btn-outline-secondary fw-bold" title="Tambah Bahan Baru">...</a>
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label for="id_supplier" class="form-label fw-semibold">Supplier <span class="text-danger">*</span></label>
-                            <select name="id_supplier" id="id_supplier" class="form-select" required>
-                                <option value="">-- Pilih Supplier --</option>
-                                @foreach($suppliers as $supplier)
-                                    <option value="{{ $supplier->id_supplier }}" {{ old('id_supplier') == $supplier->id_supplier ? 'selected' : '' }}>
-                                        {{ $supplier->nama_supplier }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="input-group">
+                                <select name="id_supplier" id="id_supplier" class="form-select" required>
+                                    <option value="">-- Pilih Supplier --</option>
+                                    @foreach($suppliers as $supplier)
+                                        <option value="{{ $supplier->id_supplier }}"
+                                            {{ old('id_supplier', session('selected_supplier')) == $supplier->id_supplier ? 'selected' : '' }}>
+                                            {{ $supplier->nama_supplier }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <a href="{{ route('supplier.create', ['redirect_to' => url()->current()]) }}" class="btn btn-outline-secondary fw-bold" title="Tambah Supplier Baru">...</a>
+                            </div>
                         </div>
                     </div>
 

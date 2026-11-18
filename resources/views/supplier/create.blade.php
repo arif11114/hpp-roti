@@ -8,8 +8,16 @@
                 <h5 class="mb-0 fw-bold">Tambah Supplier Baru</h5>
             </div>
             <div class="card-body">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
                 <form action="{{ route('supplier.store') }}" method="POST">
                     @csrf
+                    <input type="hidden" name="redirect_to" value="{{ old('redirect_to', $redirectTo ?? '') }}">
 
                     <div class="mb-3">
                         <label for="nama_supplier" class="form-label fw-semibold">Nama Supplier <span class="text-danger">*</span></label>
@@ -42,7 +50,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('supplier.index') }}" class="btn btn-secondary">Kembali</a>
+                        <a href="{{ $redirectTo ?? route('supplier.index') }}" class="btn btn-secondary">Kembali</a>
                         <button type="submit" class="btn btn-primary">Simpan Supplier</button>
                     </div>
                 </form>
