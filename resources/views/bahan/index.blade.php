@@ -1,5 +1,19 @@
 @extends('layouts.app')
 
+@section('header')
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h1 class="m-0 font-weight-bold text-dark">Master Bahan Baku</h1>
+    </div>
+    <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+            <li class="breadcrumb-item active">Master Bahan Baku</li>
+        </ol>
+    </div>
+</div>
+@endsection
+
 @section('content')
 <div class="card card-primary card-outline">
     <div class="card-header">
