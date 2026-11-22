@@ -5,7 +5,7 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{ url('/') }}" class="nav-link font-weight-bold text-primary">Sistem Perhitungan HPP Pabrik Roti</a>
+            <a href="{{ url('/') }}" class="nav-link font-weight-bold text-primary">{{ config('app.name') }} {{ config('app.instansi') }}</a>
         </li>
     </ul>
 

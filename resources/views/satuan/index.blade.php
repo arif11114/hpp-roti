@@ -42,43 +42,57 @@
             </div>
         @endif
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-light">
-                    <tr>
-                        <th style="width: 50px;">No</th>
-                        <th>Nama Satuan</th>
-                        <th>Singkatan</th>
-                        <th style="width: 150px;" class="text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($satuans as $index => $satuan)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $satuan->nama_satuan }}</td>
-                        <td><span class="badge badge-secondary">{{ $satuan->singkatan }}</span></td>
-                        <td class="text-center">
-                            <a href="{{ route('satuan.edit', $satuan->id_satuan) }}" class="btn btn-warning btn-sm">Edit</a>
-                            @if($satuan->bahans_count > 0)
-                                <button type="button" class="btn btn-secondary btn-sm" disabled title="Satuan sedang digunakan di Master Bahan">Terkunci</button>
-                            @else
-                                <form action="{{ route('satuan.destroy', $satuan->id_satuan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus satuan ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                </form>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Belum ada data satuan.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        <table id="tabelSatuan" class="table table-bordered table-hover dt-responsive nowrap" style="width:100%">
+            <thead class="thead-light">
+                <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>Nama Satuan</th>
+                    <th>Singkatan</th>
+                    <th style="width: 120px;" class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($satuans as $index => $satuan)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $satuan->nama_satuan }}</td>
+                    <td><span class="badge badge-secondary">{{ $satuan->singkatan }}</span></td>
+                    <td class="text-center">
+                        @if($satuan->bahans_count == 0)
+                            <a href="{{ route('satuan.edit', $satuan->id_satuan) }}" class="btn btn-warning btn-sm" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('satuan.destroy', $satuan->id_satuan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus satuan ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        @else
+                            <span class="badge badge-secondary" title="Satuan sedang digunakan di Master Bahan">
+                                <i class="fas fa-lock mr-1"></i> Digunakan
+                            </span>
+                        @endif
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(function () {
+        $('#tabelSatuan').DataTable({
+            responsive: true,
+            autoWidth: false,
+            language: {
+                emptyTable: "Belum ada data satuan."
+            }
+        });
+    });
+</script>
+@endpush

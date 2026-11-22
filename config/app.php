@@ -14,6 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'instansi' => env('APP_INSTANSI', 'Pabrik Roti'),
 
     /*
     |--------------------------------------------------------------------------

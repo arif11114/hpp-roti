@@ -4,7 +4,7 @@
         <span class="brand-image img-circle elevation-3 bg-warning d-flex align-items-center justify-content-center font-weight-bold text-dark" style="width: 33px; height: 33px; margin-left: .8rem;">
             <i class="fas fa-bread-slice"></i>
         </span>
-        <span class="brand-text font-weight-bold ml-2">HPP Roti</span>
+        <span class="brand-text font-weight-bold ml-2">HPP {{ config('app.instansi') }}</span>
     </a>
 
     <!-- Sidebar -->
@@ -20,34 +20,48 @@
                     </a>
                 </li>
 
-                <li class="nav-header">MASTER DATA</li>
+                {{-- Cek otomatis apakah user sedang membuka salah satu halaman Master --}}
+                @php
+                    $isMasterActive = request()->routeIs('satuan.*', 'bahan.*', 'supplier.*');
+                @endphp
 
-                <li class="nav-item">
-                    <a href="{{ route('satuan.index') }}" class="nav-link {{ request()->routeIs('satuan.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-balance-scale"></i>
-                        <p>Master Satuan</p>
+                {{-- Menu Induk: Master (Dropdown Treeview) --}}
+                <li class="nav-item {{ $isMasterActive ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ $isMasterActive ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-database"></i>
+                        <p>
+                            Master
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('satuan.index') }}" class="nav-link {{ request()->routeIs('satuan.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Satuan</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('bahan.index') }}" class="nav-link {{ request()->routeIs('bahan.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Bahan Baku</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('supplier.index') }}" class="nav-link {{ request()->routeIs('supplier.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Supplier</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
-                <li class="nav-item">
-                    <a href="{{ route('bahan.index') }}" class="nav-link {{ request()->routeIs('bahan.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-boxes"></i>
-                        <p>Master Bahan Baku</p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ route('supplier.index') }}" class="nav-link {{ request()->routeIs('supplier.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-truck"></i>
-                        <p>Master Supplier</p>
-                    </a>
-                </li>
-
-                <li class="nav-header">TRANSAKSI & INVENTORI</li>
+                {{-- Bagian Transaksi --}}
+                <li class="nav-header">TRANSAKSI</li>
 
                 <li class="nav-item">
                     <a href="{{ route('stok-bahan.index') }}" class="nav-link {{ request()->routeIs('stok-bahan.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-warehouse"></i>
+                        <i class="nav-icon fas fa-boxes"></i>
                         <p>Stok Bahan Masuk</p>
                     </a>
                 </li>

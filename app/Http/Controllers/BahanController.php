@@ -53,12 +53,22 @@ class BahanController extends Controller
 
     public function edit(BahanModel $bahan)
     {
+        if ($bahan->stokBahans()->exists()) {
+            return redirect()->route('bahan.index')
+                ->with('error', 'Bahan tidak dapat diubah karena sudah memiliki riwayat stok/transaksi.');
+        }
+
         $satuans = SatuanModel::orderBy('nama_satuan', 'asc')->get();
         return view('bahan.edit', compact('bahan', 'satuans'));
     }
 
     public function update(Request $request, BahanModel $bahan)
     {
+        if ($bahan->stokBahans()->exists()) {
+            return redirect()->route('bahan.index')
+                ->with('error', 'Bahan tidak dapat diubah karena sudah memiliki riwayat stok/transaksi.');
+        }
+
         $request->validate([
             'nama_bahan' => 'required|string|max:100|unique:bahans,nama_bahan,' . $bahan->id_bahan . ',id_bahan',
             'id_satuan'  => 'required|exists:satuans,id_satuan',
@@ -79,7 +89,8 @@ class BahanController extends Controller
     public function destroy(BahanModel $bahan)
     {
         if ($bahan->stokBahans()->exists()) {
-            return redirect()->route('bahan.index')->with('error', 'Bahan tidak dapat dihapus karena sudah memiliki riwayat stok/transaksi.');
+            return redirect()->route('bahan.index')
+                ->with('error', 'Bahan tidak dapat dihapus karena sudah memiliki riwayat stok/transaksi.');
         }
 
         $bahan->delete();

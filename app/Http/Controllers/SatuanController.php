@@ -9,7 +9,7 @@ class SatuanController extends Controller
 {
     public function index()
     {
-        $satuans = SatuanModel::withCount('bahans')->orderBy('nama_satuan', 'asc')->get();
+        $satuans = SatuanModel::withCount('bahans')->latest()->get();
         return view('satuan.index', compact('satuans'));
     }
 
@@ -48,11 +48,21 @@ class SatuanController extends Controller
 
     public function edit(SatuanModel $satuan)
     {
+        if ($satuan->bahans()->exists()) {
+            return redirect()->route('satuan.index')
+                ->with('error', 'Satuan tidak dapat diubah karena sedang digunakan pada Master Bahan.');
+        }
+
         return view('satuan.edit', compact('satuan'));
     }
 
     public function update(Request $request, SatuanModel $satuan)
     {
+        if ($satuan->bahans()->exists()) {
+            return redirect()->route('satuan.index')
+                ->with('error', 'Satuan tidak dapat diubah karena sedang digunakan pada Master Bahan.');
+        }
+
         $request->validate([
             'nama_satuan' => 'required|string|max:50|unique:satuans,nama_satuan,' . $satuan->id_satuan . ',id_satuan',
             'singkatan'   => 'required|string|max:15',
@@ -73,7 +83,8 @@ class SatuanController extends Controller
     public function destroy(SatuanModel $satuan)
     {
         if ($satuan->bahans()->exists()) {
-            return redirect()->route('satuan.index')->with('error', 'Satuan tidak dapat dihapus karena sedang digunakan pada Master Bahan.');
+            return redirect()->route('satuan.index')
+                ->with('error', 'Satuan tidak dapat dihapus karena sedang digunakan pada Master Bahan.');
         }
 
         $satuan->delete();
