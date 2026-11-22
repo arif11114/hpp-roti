@@ -23,7 +23,7 @@
                 <h5 class="mb-0 fw-bold">Edit Satuan</h5>
             </div>
             <div class="card-body">
-                <form action="{{ route('satuan.update', $satuan->id_satuan) }}" method="POST">
+                <form action="{{ route('satuan.update', $satuan) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="mb-3">

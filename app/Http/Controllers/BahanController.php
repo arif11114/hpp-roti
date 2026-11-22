@@ -42,6 +42,22 @@ class BahanController extends Controller
             'id_satuan'  => $request->id_satuan,
         ]);
 
+        $bahan->load('satuan');
+
+        // Jika disimpan lewat Modal AJAX (tanpa reload halaman)
+        if ($request->ajax() || $request->wantsJson()) {
+            $singkatan = $bahan->satuan->singkatan ?? '-';
+            return response()->json([
+                'success' => true,
+                'message' => 'Bahan "' . $bahan->nama_bahan . '" berhasil ditambahkan.',
+                'data'    => [
+                    'id'     => $bahan->id_bahan,
+                    'label'  => $bahan->nama_bahan . ' (' . $singkatan . ')',
+                    'satuan' => $bahan->satuan->singkatan ?? $bahan->satuan->nama_satuan ?? 'Unit',
+                ],
+            ]);
+        }
+
         if ($request->filled('redirect_to')) {
             return redirect($request->redirect_to)
                 ->with('success', 'Bahan "' . $bahan->nama_bahan . '" berhasil ditambahkan.')

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\EncryptsRouteKey;
 
 class SatuanModel extends Model
 {
-    use HasUuids;
+    use HasUuids, EncryptsRouteKey;
 
     protected $table = 'satuans';
     protected $primaryKey = 'id_satuan';

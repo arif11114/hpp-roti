@@ -40,6 +40,18 @@ class SupplierController extends Controller
             'alamat'        => $request->alamat,
         ]);
 
+        // Jika disimpan lewat Modal AJAX (tanpa reload halaman)
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Supplier "' . $supplier->nama_supplier . '" berhasil ditambahkan.',
+                'data'    => [
+                    'id'    => $supplier->id_supplier,
+                    'label' => $supplier->nama_supplier,
+                ],
+            ]);
+        }
+
         if ($request->filled('redirect_to')) {
             return redirect($request->redirect_to)
                 ->with('success', 'Supplier "' . $supplier->nama_supplier . '" berhasil ditambahkan.')
@@ -51,11 +63,21 @@ class SupplierController extends Controller
 
     public function edit(SupplierModel $supplier)
     {
+        if ($supplier->stokBahans()->exists()) {
+            return redirect()->route('supplier.index')
+                ->with('error', 'Supplier tidak dapat diubah karena sudah memiliki riwayat transaksi stok.');
+        }
+
         return view('supplier.edit', compact('supplier'));
     }
 
     public function update(Request $request, SupplierModel $supplier)
     {
+        if ($supplier->stokBahans()->exists()) {
+            return redirect()->route('supplier.index')
+                ->with('error', 'Supplier tidak dapat diubah karena sudah memiliki riwayat transaksi stok.');
+        }
+
         $request->validate([
             'nama_supplier' => 'required|string|max:100|unique:suppliers,nama_supplier,' . $supplier->id_supplier . ',id_supplier',
             'kontak'        => 'nullable|string|max:30',

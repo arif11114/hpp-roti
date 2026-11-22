@@ -23,7 +23,7 @@
                 <h5 class="card-title font-weight-bold mb-0">Edit Data Supplier</h5>
             </div>
             <div class="card-body">
-                <form action="{{ route('supplier.update', $supplier->id_supplier) }}" method="POST">
+                <form action="{{ route('supplier.update', $supplier) }}" method="POST">
                     @csrf
                     @method('PUT')
 

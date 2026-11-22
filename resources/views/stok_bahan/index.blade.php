@@ -15,14 +15,20 @@
 @endsection
 
 @section('content')
+@php
+    $userRole = auth()->user()->role ?? '';
+@endphp
+
 <div class="card card-primary card-outline">
     <div class="card-header">
         <h3 class="card-title font-weight-bold">Data Transaksi Stok Bahan Baku</h3>
+        @if(in_array($userRole, ['admin', 'gudang']))
         <div class="card-tools">
             <a href="{{ route('stok-bahan.create') }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus mr-1"></i> Tambah Stok Bahan
             </a>
         </div>
+        @endif
     </div>
     <div class="card-body">
         @if(session('success'))
@@ -42,73 +48,91 @@
             </div>
         @endif
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-light text-center">
+        <table id="tabelStokBahan" class="table table-bordered table-hover dt-responsive nowrap" style="width:100%">
+            <thead class="thead-light text-center">
+                <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>Nama Bahan</th>
+                    <th>Supplier</th>
+                    <th>Tgl Beli</th>
+                    <th>Tgl Produksi</th>
+                    <th>Tgl Expired</th>
+                    <th>Jumlah</th>
+                    <th>Harga Beli</th>
+                    <th>Status Expired</th>
+                    <th style="width: 110px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($stokBahans as $index => $stok)
                     <tr>
-                        <th style="width: 50px;">No</th>
-                        <th>Nama Bahan</th>
-                        <th>Supplier</th>
-                        <th>Tgl Beli</th>
-                        <th>Tgl Produksi</th>
-                        <th>Tgl Expired</th>
-                        <th>Jumlah</th>
-                        <th>Harga Beli</th>
-                        <th>Status Expired</th>
-                        <th style="width: 130px;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($stokBahans as $index => $stok)
-                        <tr>
-                            <td class="text-center">{{ $index + 1 }}</td>
-                            <td class="font-weight-bold">{{ $stok->bahan->nama_bahan ?? '-' }}</td>
-                            <td>{{ $stok->supplier->nama_supplier ?? '-' }}</td>
-                            <td class="text-center">{{ \Carbon\Carbon::parse($stok->tanggal_transaksi)->format('d-m-Y') }}</td>
-                            <td class="text-center">
-                                {{ $stok->tanggal_produksi ? \Carbon\Carbon::parse($stok->tanggal_produksi)->format('d-m-Y') : '-' }}
-                            </td>
-                            <td class="text-center">
-                                {{ $stok->tanggal_expired ? \Carbon\Carbon::parse($stok->tanggal_expired)->format('d-m-Y') : 'Tanpa Expired' }}
-                            </td>
-                            <td class="text-right">
-                                {{ number_format($stok->jumlah, 2, ',', '.') }}
-                                <span class="badge badge-info">{{ $stok->bahan->satuan->singkatan ?? '' }}</span>
-                            </td>
-                            <td class="text-right">Rp {{ number_format($stok->harga_beli, 0, ',', '.') }}</td>
-                            <td class="text-center">
-                                @if(!$stok->tanggal_expired)
-                                    <span class="badge badge-secondary">Non-Expired</span>
+                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td class="font-weight-bold">{{ $stok->bahan->nama_bahan ?? '-' }}</td>
+                        <td>{{ $stok->supplier->nama_supplier ?? '-' }}</td>
+                        <td class="text-center">{{ \Carbon\Carbon::parse($stok->tanggal_transaksi)->format('d-m-Y') }}</td>
+                        <td class="text-center">
+                            {{ $stok->tanggal_produksi ? \Carbon\Carbon::parse($stok->tanggal_produksi)->format('d-m-Y') : '-' }}
+                        </td>
+                        <td class="text-center">
+                            {{ $stok->tanggal_expired ? \Carbon\Carbon::parse($stok->tanggal_expired)->format('d-m-Y') : 'Tanpa Expired' }}
+                        </td>
+                        <td class="text-right">
+                            {{ number_format($stok->jumlah, 2, ',', '.') }}
+                            <span class="badge badge-info">{{ $stok->bahan->satuan->singkatan ?? '' }}</span>
+                        </td>
+                        <td class="text-right">Rp {{ number_format($stok->harga_beli, 0, ',', '.') }}</td>
+                        <td class="text-center">
+                            @if(!$stok->tanggal_expired)
+                                <span class="badge badge-secondary">Non-Expired</span>
+                            @else
+                                @php
+                                    $sisaHari = now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($stok->tanggal_expired)->startOfDay(), false);
+                                @endphp
+                                @if($sisaHari < 0)
+                                    <span class="badge badge-danger">Expired ({{ abs($sisaHari) }} hari lalu)</span>
+                                @elseif($sisaHari <= $stok->batas_notif_expired)
+                                    <span class="badge badge-warning">Hampir Expired ({{ $sisaHari }} hari lagi)</span>
                                 @else
-                                    @php
-                                        $sisaHari = now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($stok->tanggal_expired)->startOfDay(), false);
-                                    @endphp
-                                    @if($sisaHari < 0)
-                                        <span class="badge badge-danger">Expired ({{ abs($sisaHari) }} hari lalu)</span>
-                                    @elseif($sisaHari <= $stok->batas_notif_expired)
-                                        <span class="badge badge-warning">Hampir Expired ({{ $sisaHari }} hari lagi)</span>
-                                    @else
-                                        <span class="badge badge-success">Aman ({{ $sisaHari }} hari lagi)</span>
-                                    @endif
+                                    <span class="badge badge-success">Aman ({{ $sisaHari }} hari lagi)</span>
                                 @endif
-                            </td>
-                            <td class="text-center text-nowrap">
-                                <a href="{{ route('stok-bahan.edit', $stok->id_stok) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('stok-bahan.destroy', $stok->id_stok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus stok ini?')">
+                            @endif
+                        </td>
+                        <td class="text-center text-nowrap">
+                            @if($userRole === 'admin')
+                                <a href="{{ route('stok-bahan.edit', $stok) }}" class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('stok-bahan.destroy', $stok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus stok ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="10" class="text-center text-muted py-4">Belum ada data stok bahan. Silakan tambah stok baru.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                            @else
+                                <span class="badge badge-light border text-muted">
+                                    <i class="fas fa-eye mr-1"></i> Lihat Saja
+                                </span>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(function () {
+        $('#tabelStokBahan').DataTable({
+            responsive: true,
+            autoWidth: false,
+            language: {
+                emptyTable: "Belum ada data stok bahan. Silakan tambah stok baru."
+            }
+        });
+    });
+</script>
+@endpush

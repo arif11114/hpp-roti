@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StokBahanModel;
 use App\Models\BahanModel;
 use App\Models\SupplierModel;
+use App\Models\SatuanModel;
 use Illuminate\Http\Request;
 
 class StokBahanController extends Controller
@@ -22,8 +23,9 @@ class StokBahanController extends Controller
     {
         $bahans = BahanModel::with('satuan')->orderBy('nama_bahan', 'asc')->get();
         $suppliers = SupplierModel::orderBy('nama_supplier', 'asc')->get();
+        $satuans = SatuanModel::orderBy('nama_satuan', 'asc')->get();
 
-        return view('stok_bahan.create', compact('bahans', 'suppliers'));
+        return view('stok_bahan.create', compact('bahans', 'suppliers', 'satuans'));
     }
 
     public function store(Request $request)
@@ -56,8 +58,9 @@ class StokBahanController extends Controller
     {
         $bahans = BahanModel::with('satuan')->orderBy('nama_bahan', 'asc')->get();
         $suppliers = SupplierModel::orderBy('nama_supplier', 'asc')->get();
+        $satuans = SatuanModel::orderBy('nama_satuan', 'asc')->get();
 
-        return view('stok_bahan.edit', compact('stokBahan', 'bahans', 'suppliers'));
+        return view('stok_bahan.edit', compact('stokBahan', 'bahans', 'suppliers', 'satuans'));
     }
 
     public function update(Request $request, StokBahanModel $stokBahan)

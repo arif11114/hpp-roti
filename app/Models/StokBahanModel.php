@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\EncryptsRouteKey;
 
 class StokBahanModel extends Model
 {
-    use HasUuids;
+    use HasUuids, EncryptsRouteKey;
 
     protected $table = 'stok_bahans';
     protected $primaryKey = 'id_stok';

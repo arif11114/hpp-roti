@@ -32,7 +32,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('bahan.update', $bahan->id_bahan) }}" method="POST">
+                <form action="{{ route('bahan.update', $bahan) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="form-group">
@@ -55,7 +55,7 @@
                                 @endforeach
                             </select>
                             <div class="input-group-append">
-                                <a href="{{ route('satuan.create', ['redirect_to' => url()->current()]) }}" class="btn btn-outline-secondary font-weight-bold" title="Tambah Satuan Baru">...</a>
+                                <button type="button" class="btn btn-outline-secondary font-weight-bold" data-toggle="modal" data-target="#modalTambahSatuan" title="Tambah Satuan Baru">...</button>
                             </div>
                             @error('id_satuan')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -72,4 +72,6 @@
         </div>
     </div>
 </div>
+
+@include('layouts.partials.quick_modals')
 @endsection

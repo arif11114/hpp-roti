@@ -66,10 +66,10 @@
                     <td class="text-center">
                         @if($userRole === 'admin')
                             @if($satuan->bahans_count == 0)
-                                <a href="{{ route('satuan.edit', $satuan->id_satuan) }}" class="btn btn-warning btn-sm" title="Edit">
+                                <a href="{{ route('satuan.edit', $satuan) }}" class="btn btn-warning btn-sm" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('satuan.destroy', $satuan->id_satuan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus satuan ini?');">
+                                <form action="{{ route('satuan.destroy', $satuan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus satuan ini?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" title="Hapus">

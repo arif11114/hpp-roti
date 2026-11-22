@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\EncryptsRouteKey;
 
 class BahanModel extends Model
 {
-    use HasUuids;
+    use HasUuids, EncryptsRouteKey;
 
     protected $table = 'bahans';
     protected $primaryKey = 'id_bahan';

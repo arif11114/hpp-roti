@@ -15,7 +15,6 @@ class SatuanController extends Controller
 
     public function create(Request $request)
     {
-        // Tangkap URL halaman asal jika diakses lewat tombol shortcut (...)
         $redirectTo = $request->query('redirect_to');
         return view('satuan.create', compact('redirectTo'));
     }
@@ -36,7 +35,18 @@ class SatuanController extends Controller
             'singkatan'   => $request->singkatan,
         ]);
 
-        // Jika berasal dari tombol shortcut (...), kembalikan langsung ke form asal!
+        // Jika disimpan lewat Modal AJAX (tanpa reload halaman)
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Satuan "' . $satuan->nama_satuan . '" berhasil ditambahkan.',
+                'data'    => [
+                    'id'    => $satuan->id_satuan,
+                    'label' => $satuan->nama_satuan . ' (' . $satuan->singkatan . ')',
+                ],
+            ]);
+        }
+
         if ($request->filled('redirect_to')) {
             return redirect($request->redirect_to)
                 ->with('success', 'Satuan "' . $satuan->nama_satuan . '" berhasil ditambahkan.')

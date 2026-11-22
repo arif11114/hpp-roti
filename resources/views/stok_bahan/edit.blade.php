@@ -45,11 +45,11 @@
                     </div>
                 @endif
 
-                <form action="{{ route('stok-bahan.update', $stokBahan->id_stok) }}" method="POST">
+                <form action="{{ route('stok-bahan.update', $stokBahan) }}" method="POST">
                     @csrf
                     @method('PUT')
 
-                    {{-- 1. Nama Bahan & Supplier + Tombol Smart Redirect (...) --}}
+                    {{-- 1. Nama Bahan & Supplier + Tombol Modal AJAX (...) --}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -66,7 +66,7 @@
                                         @endforeach
                                     </select>
                                     <div class="input-group-append">
-                                        <a href="{{ route('bahan.create', ['redirect_to' => url()->current()]) }}" class="btn btn-outline-secondary font-weight-bold" title="Tambah Bahan Baru">...</a>
+                                        <button type="button" class="btn btn-outline-secondary font-weight-bold" data-toggle="modal" data-target="#modalTambahBahan" title="Tambah Bahan Baru">...</button>
                                     </div>
                                 </div>
                             </div>
@@ -86,7 +86,7 @@
                                         @endforeach
                                     </select>
                                     <div class="input-group-append">
-                                        <a href="{{ route('supplier.create', ['redirect_to' => url()->current()]) }}" class="btn btn-outline-secondary font-weight-bold" title="Tambah Supplier Baru">...</a>
+                                        <button type="button" class="btn btn-outline-secondary font-weight-bold" data-toggle="modal" data-target="#modalTambahSupplier" title="Tambah Supplier Baru">...</button>
                                     </div>
                                 </div>
                             </div>
@@ -161,6 +161,8 @@
         </div>
     </div>
 </div>
+
+@include('layouts.partials.quick_modals')
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
