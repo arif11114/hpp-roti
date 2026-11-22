@@ -15,14 +15,20 @@
 @endsection
 
 @section('content')
+@php
+    $userRole = auth()->user()->role ?? '';
+@endphp
+
 <div class="card card-primary card-outline">
     <div class="card-header">
         <h3 class="card-title font-weight-bold">Master Data Bahan Baku</h3>
+        @if(in_array($userRole, ['admin', 'gudang']))
         <div class="card-tools">
             <a href="{{ route('bahan.create') }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus mr-1"></i> Tambah Bahan
             </a>
         </div>
+        @endif
     </div>
     <div class="card-body">
         @if(session('success'))
@@ -61,20 +67,26 @@
                         <span class="badge badge-info">{{ $bahan->satuan->singkatan ?? '' }}</span>
                     </td>
                     <td class="text-center">
-                        @if($bahan->stok_bahans_count == 0)
-                            <a href="{{ route('bahan.edit', $bahan->id_bahan) }}" class="btn btn-warning btn-sm" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('bahan.destroy', $bahan->id_bahan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus bahan ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                        @if($userRole === 'admin')
+                            @if($bahan->stok_bahans_count == 0)
+                                <a href="{{ route('bahan.edit', $bahan->id_bahan) }}" class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('bahan.destroy', $bahan->id_bahan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus bahan ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <span class="badge badge-secondary" title="Bahan sudah memiliki riwayat stok">
+                                    <i class="fas fa-lock mr-1"></i> Digunakan
+                                </span>
+                            @endif
                         @else
-                            <span class="badge badge-secondary" title="Bahan sudah memiliki riwayat stok">
-                                <i class="fas fa-lock mr-1"></i> Digunakan
+                            <span class="badge badge-light border text-muted">
+                                <i class="fas fa-eye mr-1"></i> Lihat Saja
                             </span>
                         @endif
                     </td>

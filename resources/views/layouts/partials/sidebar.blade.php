@@ -23,6 +23,7 @@
                 {{-- Cek otomatis apakah user sedang membuka salah satu halaman Master --}}
                 @php
                     $isMasterActive = request()->routeIs('satuan.*', 'bahan.*', 'supplier.*');
+                    $userRole = auth()->user()->role ?? '';
                 @endphp
 
                 {{-- Menu Induk: Master (Dropdown Treeview) --}}
@@ -35,28 +36,35 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        @if(in_array($userRole, ['admin', 'gudang']))
                         <li class="nav-item">
                             <a href="{{ route('satuan.index') }}" class="nav-link {{ request()->routeIs('satuan.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Satuan</p>
                             </a>
                         </li>
+                        @endif
+
                         <li class="nav-item">
                             <a href="{{ route('bahan.index') }}" class="nav-link {{ request()->routeIs('bahan.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Bahan Baku</p>
                             </a>
                         </li>
+
+                        @if(in_array($userRole, ['admin', 'gudang']))
                         <li class="nav-item">
                             <a href="{{ route('supplier.index') }}" class="nav-link {{ request()->routeIs('supplier.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Supplier</p>
                             </a>
                         </li>
+                        @endif
                     </ul>
                 </li>
 
-                {{-- Bagian Transaksi --}}
+                {{-- Bagian Transaksi (Hanya Admin & Gudang) --}}
+                @if(in_array($userRole, ['admin', 'gudang']))
                 <li class="nav-header">TRANSAKSI</li>
 
                 <li class="nav-item">
@@ -65,6 +73,7 @@
                         <p>Stok Bahan Masuk</p>
                     </a>
                 </li>
+                @endif
 
             </ul>
         </nav>

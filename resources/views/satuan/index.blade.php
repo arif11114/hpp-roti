@@ -15,14 +15,20 @@
 @endsection
 
 @section('content')
+@php
+    $userRole = auth()->user()->role ?? '';
+@endphp
+
 <div class="card card-primary card-outline">
     <div class="card-header">
         <h3 class="card-title font-weight-bold">Master Data Satuan</h3>
+        @if(in_array($userRole, ['admin', 'gudang']))
         <div class="card-tools">
             <a href="{{ route('satuan.create') }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus mr-1"></i> Tambah Satuan
             </a>
         </div>
+        @endif
     </div>
     <div class="card-body">
         @if(session('success'))
@@ -58,20 +64,26 @@
                     <td>{{ $satuan->nama_satuan }}</td>
                     <td><span class="badge badge-secondary">{{ $satuan->singkatan }}</span></td>
                     <td class="text-center">
-                        @if($satuan->bahans_count == 0)
-                            <a href="{{ route('satuan.edit', $satuan->id_satuan) }}" class="btn btn-warning btn-sm" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('satuan.destroy', $satuan->id_satuan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus satuan ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                        @if($userRole === 'admin')
+                            @if($satuan->bahans_count == 0)
+                                <a href="{{ route('satuan.edit', $satuan->id_satuan) }}" class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('satuan.destroy', $satuan->id_satuan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus satuan ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <span class="badge badge-secondary" title="Satuan sedang digunakan di Master Bahan">
+                                    <i class="fas fa-lock mr-1"></i> Digunakan
+                                </span>
+                            @endif
                         @else
-                            <span class="badge badge-secondary" title="Satuan sedang digunakan di Master Bahan">
-                                <i class="fas fa-lock mr-1"></i> Digunakan
+                            <span class="badge badge-light border text-muted">
+                                <i class="fas fa-eye mr-1"></i> Lihat Saja
                             </span>
                         @endif
                     </td>

@@ -11,10 +11,22 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-            <span class="nav-link text-muted">
-                <i class="fas fa-user-shield mr-1"></i> Admin / Gudang
+        @auth
+        <li class="nav-item d-flex align-items-center mr-3">
+            <span class="text-muted small">
+                <i class="fas fa-user-circle mr-1"></i>
+                {{ auth()->user()->name }}
+                <span class="badge badge-info text-uppercase ml-1">{{ auth()->user()->role }}</span>
             </span>
         </li>
+        <li class="nav-item">
+            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Keluar">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </button>
+            </form>
+        </li>
+        @endauth
     </ul>
 </nav>
