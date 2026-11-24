@@ -27,4 +27,13 @@ class BahanModel extends Model
     {
         return $this->hasMany(StokBahanModel::class, 'id_bahan', 'id_bahan');
     }
+    public function resepProduks()
+    {
+        return $this->hasMany(ResepProdukModel::class, 'id_bahan', 'id_bahan');
+    }
+
+    public function getTotalStokTersediaAttribute(): float
+    {
+        return (float) $this->stokBahans()->sum('sisa_stok');
+    }
 }

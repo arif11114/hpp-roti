@@ -22,7 +22,7 @@
 
                 {{-- Cek otomatis apakah user sedang membuka salah satu halaman Master --}}
                 @php
-                    $isMasterActive = request()->routeIs('satuan.*', 'bahan.*', 'supplier.*');
+                    $isMasterActive = request()->routeIs('satuan.*', 'bahan.*', 'supplier.*', 'produk.*');
                     $userRole = auth()->user()->role ?? '';
                 @endphp
 
@@ -60,17 +60,55 @@
                             </a>
                         </li>
                         @endif
+
+                        <li class="nav-item">
+                            <a href="{{ route('produk.index') }}" class="nav-link {{ request()->routeIs('produk.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Produk & Resep</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
-                {{-- Bagian Transaksi (Hanya Admin & Gudang) --}}
-                @if(in_array($userRole, ['admin', 'gudang']))
+                {{-- Bagian Transaksi --}}
+                @if(in_array($userRole, ['admin', 'gudang', 'produksi']))
                 <li class="nav-header">TRANSAKSI</li>
 
+                @if(in_array($userRole, ['admin', 'gudang']))
                 <li class="nav-item">
                     <a href="{{ route('stok-bahan.index') }}" class="nav-link {{ request()->routeIs('stok-bahan.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-boxes"></i>
                         <p>Stok Bahan Masuk</p>
+                    </a>
+                </li>
+                @endif
+
+                @if(in_array($userRole, ['admin', 'produksi']))
+                <li class="nav-item">
+                    <a href="{{ route('produksi.index') }}" class="nav-link {{ request()->routeIs('produksi.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-bread-slice"></i>
+                        <p>Transaksi Produksi</p>
+                    </a>
+                </li>
+                @endif
+                @endif
+
+                {{-- Bagian Laporan --}}
+                <li class="nav-header">LAPORAN</li>
+                <li class="nav-item">
+                    <a href="{{ route('laporan.hpp') }}" class="nav-link {{ request()->routeIs('laporan.hpp') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-calculator"></i>
+                        <p>Laporan Perhitungan HPP</p>
+                    </a>
+                </li>
+
+                {{-- Bagian Pengaturan (Khusus Admin) --}}
+                @if($userRole === 'admin')
+                <li class="nav-header">PENGATURAN</li>
+                <li class="nav-item">
+                    <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-users-cog"></i>
+                        <p>Manajemen User</p>
                     </a>
                 </li>
                 @endif

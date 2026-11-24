@@ -22,6 +22,7 @@ class StokBahanModel extends Model
         'tanggal_produksi',
         'tanggal_expired',
         'jumlah',
+        'sisa_stok',
         'harga_beli',
         'batas_notif_expired',
     ];
@@ -34,5 +35,15 @@ class StokBahanModel extends Model
     public function supplier()
     {
         return $this->belongsTo(SupplierModel::class, 'id_supplier', 'id_supplier');
+    }
+
+    public function detailProduksis()
+    {
+        return $this->hasMany(DetailProduksiModel::class, 'id_stok', 'id_stok');
+    }
+
+    public function getHargaPerUnitAttribute(): float
+    {
+        return $this->jumlah > 0 ? ($this->harga_beli / $this->jumlah) : 0;
     }
 }
