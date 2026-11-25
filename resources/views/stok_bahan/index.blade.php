@@ -39,6 +39,14 @@
                 </button>
             </div>
         @endif
+        @if(session('warning'))
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle mr-1"></i> {{ session('warning') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
@@ -51,7 +59,7 @@
         <table id="tabelStokBahan" class="table table-bordered table-hover dt-responsive nowrap" style="width:100%">
             <thead class="thead-light text-center">
                 <tr>
-                    <th style="width: 50px;">No</th>
+                    <th style="width: 40px;">No</th>
                     <th>Nama Bahan</th>
                     <th>Supplier</th>
                     <th>Tgl Beli</th>
@@ -60,7 +68,10 @@
                     <th>Jumlah</th>
                     <th>Harga Beli</th>
                     <th>Status Expired</th>
-                    <th style="width: 110px;">Aksi</th>
+                    <th>Bukti Nota</th>
+                    @if($userRole === 'admin')
+                        <th style="width: 100px;">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -97,24 +108,29 @@
                                 @endif
                             @endif
                         </td>
-                        <td class="text-center text-nowrap">
-                            @if($userRole === 'admin')
-                                <a href="{{ route('stok-bahan.edit', $stok) }}" class="btn btn-warning btn-sm" title="Edit">
-                                    <i class="fas fa-edit"></i>
+                        <td class="text-center">
+                            @if($stok->bukti_nota)
+                                <a href="{{ asset('storage/' . $stok->bukti_nota) }}" target="_blank" class="btn btn-info btn-xs">
+                                    <i class="fas fa-file-invoice mr-1"></i> Lihat Nota
                                 </a>
-                                <form action="{{ route('stok-bahan.destroy', $stok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus stok ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
                             @else
-                                <span class="badge badge-light border text-muted">
-                                    <i class="fas fa-eye mr-1"></i> Lihat Saja
-                                </span>
+                                <span class="text-muted small">-</span>
                             @endif
                         </td>
+                        @if($userRole === 'admin')
+                        <td class="text-center text-nowrap">
+                            <a href="{{ route('stok-bahan.edit', $stok) }}" class="btn btn-warning btn-sm" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('stok-bahan.destroy', $stok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus stok ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>

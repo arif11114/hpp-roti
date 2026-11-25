@@ -62,6 +62,11 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Batas Kadaluarsa Normatif (Hari) <span class="text-danger">*</span></label>
+                        <input type="number" name="masa_kadaluarsa_hari" class="form-control" value="30" min="1" required>
+                        <small class="form-text text-muted">Standar masa simpan bahan (contoh: Tepung = 30, Mentega = 14, Pisang = 3).</small>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -139,6 +144,9 @@ $(function () {
                         });
                         if (res.data.satuan) {
                             $opt.attr('data-satuan', res.data.satuan);
+                        }
+                        if (res.data.masa_kadaluarsa) {
+                            $opt.attr('data-kadaluarsa', res.data.masa_kadaluarsa);
                         }
                         $select.append($opt).trigger('change');
                         if (typeof extraCallback === 'function') {

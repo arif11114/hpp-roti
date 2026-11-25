@@ -24,6 +24,7 @@ class StokBahanModel extends Model
         'jumlah',
         'sisa_stok',
         'harga_beli',
+        'bukti_nota',
         'batas_notif_expired',
     ];
 

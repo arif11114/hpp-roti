@@ -21,13 +21,16 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Redirect dashboard sesuai role
     Route::get('/', function () {
+        if (auth()->user()->role === 'produksi') {
+            return redirect()->route('produksi.index');
+        }
         return redirect()->route('bahan.index');
     })->name('dashboard');
 
-    // Semua role (admin, gudang, produksi) bisa melihat daftar Bahan Baku, Produk, & Laporan HPP
+    // Semua role (admin, gudang, produksi) bisa melihat daftar Bahan Baku & Laporan HPP
     Route::get('bahan', [BahanController::class, 'index'])->name('bahan.index');
-    Route::get('produk', [ProdukController::class, 'index'])->name('produk.index');
     Route::get('laporan/hpp', [LaporanHppController::class, 'index'])->name('laporan.hpp');
 
     // Admin & Gudang: Lihat Satuan & Supplier, Tambah Master baru, & Kelola Stok Bahan Masuk
@@ -42,23 +45,19 @@ Route::middleware('auth')->group(function () {
         Route::resource('stok-bahan', StokBahanController::class)->except(['show']);
     });
 
-    // Admin & Produksi: Tambah Produk/Resep & Input Transaksi Produksi
+    // Admin & Produksi: Input & Lihat Transaksi Produksi (TANPA akses resep)
     Route::middleware('role:admin,produksi')->group(function () {
-        Route::resource('produk', ProdukController::class)->only(['create', 'store']);
         Route::resource('produksi', ProduksiController::class)->only(['index', 'create', 'store', 'show']);
     });
 
-    // Detail Resep Produk (diletakkan setelah produk/create agar tidak bentrok)
-    Route::get('produk/{produk}', [ProdukController::class, 'show'])->name('produk.show');
-
-    // Khusus Admin: Edit, Update, Hapus Master Data, Pembatalan Produksi, & Manajemen User
+    // Khusus Admin: Kelola Produk & Resep (Full Access), Edit/Hapus Master, Pembatalan Produksi, & Manajemen User
     Route::middleware('role:admin')->group(function () {
         Route::resource('users', UserController::class)->except(['show']);
+        Route::resource('produk', ProdukController::class);
 
         Route::resource('bahan', BahanController::class)->only(['edit', 'update', 'destroy']);
         Route::resource('satuan', SatuanController::class)->only(['edit', 'update', 'destroy']);
         Route::resource('supplier', SupplierController::class)->only(['edit', 'update', 'destroy']);
-        Route::resource('produk', ProdukController::class)->only(['edit', 'update', 'destroy']);
         Route::delete('produksi/{produksi}', [ProduksiController::class, 'destroy'])->name('produksi.destroy');
     });
 });

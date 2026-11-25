@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\EncryptsRouteKey;
@@ -16,7 +15,7 @@ class BahanModel extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['id_satuan', 'nama_bahan'];
+    protected $fillable = ['id_satuan', 'nama_bahan', 'masa_kadaluarsa_hari'];
 
     public function satuan()
     {
@@ -27,6 +26,7 @@ class BahanModel extends Model
     {
         return $this->hasMany(StokBahanModel::class, 'id_bahan', 'id_bahan');
     }
+
     public function resepProduks()
     {
         return $this->hasMany(ResepProdukModel::class, 'id_bahan', 'id_bahan');

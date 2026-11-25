@@ -55,7 +55,9 @@
                     <th>Nama Supplier</th>
                     <th>Kontak / No. HP</th>
                     <th>Alamat</th>
-                    <th style="width: 120px;" class="text-center">Aksi</th>
+                    @if($userRole === 'admin')
+                        <th style="width: 120px;" class="text-center">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -65,30 +67,24 @@
                     <td class="font-weight-bold">{{ $supplier->nama_supplier }}</td>
                     <td>{{ $supplier->kontak ?? '-' }}</td>
                     <td>{{ $supplier->alamat ?? '-' }}</td>
+                    @if($userRole === 'admin')
                     <td class="text-center">
-                        @if($userRole === 'admin')
-                            @if($supplier->stok_bahans_count == 0)
-                                <a href="{{ route('supplier.edit', $supplier) }}" class="btn btn-warning btn-sm" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('supplier.destroy', $supplier) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus supplier ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            @else
-                                <span class="badge badge-secondary" title="Supplier sudah memiliki riwayat transaksi">
-                                    <i class="fas fa-lock mr-1"></i> Digunakan
-                                </span>
-                            @endif
+                        @if($supplier->stok_bahans_count == 0)
+                            <a href="{{ route('supplier.edit', $supplier) }}" class="btn btn-warning btn-sm" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('supplier.destroy', $supplier) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus supplier ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         @else
-                            <span class="badge badge-light border text-muted">
-                                <i class="fas fa-eye mr-1"></i> Lihat Saja
-                            </span>
+                            <span class="text-muted small">Digunakan</span>
                         @endif
                     </td>
+                    @endif
                 </tr>
                 @endforeach
             </tbody>

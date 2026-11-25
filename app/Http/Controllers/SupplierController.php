@@ -24,6 +24,12 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'nama_supplier' => ucwords(strtolower(trim($request->nama_supplier ?? ''))),
+            'kontak'        => $request->kontak ? trim($request->kontak) : null,
+            'alamat'        => $request->alamat ? trim($request->alamat) : null,
+        ]);
+
         $request->validate([
             'nama_supplier' => 'required|string|max:100|unique:suppliers,nama_supplier',
             'kontak'        => 'nullable|string|max:30',
@@ -77,6 +83,12 @@ class SupplierController extends Controller
             return redirect()->route('supplier.index')
                 ->with('error', 'Supplier tidak dapat diubah karena sudah memiliki riwayat transaksi stok.');
         }
+
+        $request->merge([
+            'nama_supplier' => ucwords(strtolower(trim($request->nama_supplier ?? ''))),
+            'kontak'        => $request->kontak ? trim($request->kontak) : null,
+            'alamat'        => $request->alamat ? trim($request->alamat) : null,
+        ]);
 
         $request->validate([
             'nama_supplier' => 'required|string|max:100|unique:suppliers,nama_supplier,' . $supplier->id_supplier . ',id_supplier',

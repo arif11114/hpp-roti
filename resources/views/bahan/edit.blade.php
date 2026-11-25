@@ -36,7 +36,7 @@
                     @csrf
                     @method('PUT')
                     <div class="form-group">
-                        <label for="nama_bahan">Nama Bahan</label>
+                        <label for="nama_bahan">Nama Bahan <span class="text-danger">*</span></label>
                         <input type="text" name="nama_bahan" id="nama_bahan" class="form-control @error('nama_bahan') is-invalid @enderror" value="{{ old('nama_bahan', $bahan->nama_bahan) }}" required>
                         @error('nama_bahan')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="id_satuan">Satuan Beli</label>
+                        <label for="id_satuan">Satuan Beli <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <select name="id_satuan" id="id_satuan" class="form-control @error('id_satuan') is-invalid @enderror" required>
                                 <option value="">-- Pilih Satuan --</option>
@@ -61,6 +61,20 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="masa_kadaluarsa_hari">Batas Kadaluarsa Normatif (Hari) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" name="masa_kadaluarsa_hari" id="masa_kadaluarsa_hari" class="form-control @error('masa_kadaluarsa_hari') is-invalid @enderror" value="{{ old('masa_kadaluarsa_hari', $bahan->masa_kadaluarsa_hari ?? 30) }}" min="1" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text">Hari</span>
+                            </div>
+                            @error('masa_kadaluarsa_hari')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <small class="form-text text-muted">Acuan masa simpan standar bahan (contoh: Tepung = 30 hari, Mentega = 14 hari, Pisang = 3 hari).</small>
                     </div>
 
                     <div class="d-flex justify-content-between mt-4">

@@ -26,6 +26,8 @@
                     $userRole = auth()->user()->role ?? '';
                 @endphp
 
+                <li class="nav-header">DATA MASTER</li>
+
                 {{-- Menu Induk: Master (Dropdown Treeview) --}}
                 <li class="nav-item {{ $isMasterActive ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ $isMasterActive ? 'active' : '' }}">
@@ -61,12 +63,15 @@
                         </li>
                         @endif
 
+                        {{-- Hanya Admin yang bisa melihat menu Produk & Resep --}}
+                        @if($userRole === 'admin')
                         <li class="nav-item">
                             <a href="{{ route('produk.index') }}" class="nav-link {{ request()->routeIs('produk.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Produk & Resep</p>
                             </a>
                         </li>
+                        @endif
                     </ul>
                 </li>
 

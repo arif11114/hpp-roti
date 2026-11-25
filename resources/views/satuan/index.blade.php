@@ -54,7 +54,9 @@
                     <th style="width: 50px;">No</th>
                     <th>Nama Satuan</th>
                     <th>Singkatan</th>
-                    <th style="width: 120px;" class="text-center">Aksi</th>
+                    @if($userRole === 'admin')
+                        <th style="width: 120px;" class="text-center">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -63,30 +65,24 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $satuan->nama_satuan }}</td>
                     <td><span class="badge badge-secondary">{{ $satuan->singkatan }}</span></td>
+                    @if($userRole === 'admin')
                     <td class="text-center">
-                        @if($userRole === 'admin')
-                            @if($satuan->bahans_count == 0)
-                                <a href="{{ route('satuan.edit', $satuan) }}" class="btn btn-warning btn-sm" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('satuan.destroy', $satuan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus satuan ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            @else
-                                <span class="badge badge-secondary" title="Satuan sedang digunakan di Master Bahan">
-                                    <i class="fas fa-lock mr-1"></i> Digunakan
-                                </span>
-                            @endif
+                        @if($satuan->bahans_count == 0)
+                            <a href="{{ route('satuan.edit', $satuan) }}" class="btn btn-warning btn-sm" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('satuan.destroy', $satuan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus satuan ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         @else
-                            <span class="badge badge-light border text-muted">
-                                <i class="fas fa-eye mr-1"></i> Lihat Saja
-                            </span>
+                            <span class="text-muted small">Digunakan</span>
                         @endif
                     </td>
+                    @endif
                 </tr>
                 @endforeach
             </tbody>

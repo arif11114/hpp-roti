@@ -21,6 +21,11 @@ class SatuanController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'nama_satuan' => ucwords(strtolower(trim($request->nama_satuan ?? ''))),
+            'singkatan'   => strtolower(trim($request->singkatan ?? '')),
+        ]);
+
         $request->validate([
             'nama_satuan' => 'required|string|max:50|unique:satuans,nama_satuan',
             'singkatan'   => 'required|string|max:15',
@@ -72,6 +77,11 @@ class SatuanController extends Controller
             return redirect()->route('satuan.index')
                 ->with('error', 'Satuan tidak dapat diubah karena sedang digunakan pada Master Bahan.');
         }
+
+        $request->merge([
+            'nama_satuan' => ucwords(strtolower(trim($request->nama_satuan ?? ''))),
+            'singkatan'   => strtolower(trim($request->singkatan ?? '')),
+        ]);
 
         $request->validate([
             'nama_satuan' => 'required|string|max:50|unique:satuans,nama_satuan,' . $satuan->id_satuan . ',id_satuan',

@@ -27,19 +27,27 @@ class BahanController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'nama_bahan' => ucwords(strtolower(trim($request->nama_bahan ?? ''))),
+        ]);
+
         $request->validate([
-            'nama_bahan' => 'required|string|max:100|unique:bahans,nama_bahan',
-            'id_satuan'  => 'required|exists:satuans,id_satuan',
+            'nama_bahan'           => 'required|string|max:100|unique:bahans,nama_bahan',
+            'id_satuan'            => 'required|exists:satuans,id_satuan',
+            'masa_kadaluarsa_hari' => 'required|integer|min:1|max:3650',
         ], [
-            'nama_bahan.required' => 'Nama bahan wajib diisi.',
-            'nama_bahan.unique'   => 'Nama bahan ini sudah terdaftar.',
-            'id_satuan.required'  => 'Satuan beli wajib dipilih.',
-            'id_satuan.exists'    => 'Satuan yang dipilih tidak valid.',
+            'nama_bahan.required'           => 'Nama bahan wajib diisi.',
+            'nama_bahan.unique'             => 'Nama bahan ini sudah terdaftar.',
+            'id_satuan.required'            => 'Satuan beli wajib dipilih.',
+            'id_satuan.exists'              => 'Satuan yang dipilih tidak valid.',
+            'masa_kadaluarsa_hari.required' => 'Batas kadaluarsa normatif wajib diisi.',
+            'masa_kadaluarsa_hari.min'      => 'Batas kadaluarsa minimal 1 hari.',
         ]);
 
         $bahan = BahanModel::create([
-            'nama_bahan' => $request->nama_bahan,
-            'id_satuan'  => $request->id_satuan,
+            'nama_bahan'           => $request->nama_bahan,
+            'id_satuan'            => $request->id_satuan,
+            'masa_kadaluarsa_hari' => $request->masa_kadaluarsa_hari,
         ]);
 
         $bahan->load('satuan');
@@ -51,9 +59,10 @@ class BahanController extends Controller
                 'success' => true,
                 'message' => 'Bahan "' . $bahan->nama_bahan . '" berhasil ditambahkan.',
                 'data'    => [
-                    'id'     => $bahan->id_bahan,
-                    'label'  => $bahan->nama_bahan . ' (' . $singkatan . ')',
-                    'satuan' => $bahan->satuan->singkatan ?? $bahan->satuan->nama_satuan ?? 'Unit',
+                    'id'              => $bahan->id_bahan,
+                    'label'           => $bahan->nama_bahan . ' (' . $singkatan . ')',
+                    'satuan'          => $bahan->satuan->singkatan ?? $bahan->satuan->nama_satuan ?? 'Unit',
+                    'masa_kadaluarsa' => $bahan->masa_kadaluarsa_hari,
                 ],
             ]);
         }
@@ -85,18 +94,26 @@ class BahanController extends Controller
                 ->with('error', 'Bahan tidak dapat diubah karena sudah memiliki riwayat stok/transaksi.');
         }
 
+        $request->merge([
+            'nama_bahan' => ucwords(strtolower(trim($request->nama_bahan ?? ''))),
+        ]);
+
         $request->validate([
-            'nama_bahan' => 'required|string|max:100|unique:bahans,nama_bahan,' . $bahan->id_bahan . ',id_bahan',
-            'id_satuan'  => 'required|exists:satuans,id_satuan',
+            'nama_bahan'           => 'required|string|max:100|unique:bahans,nama_bahan,' . $bahan->id_bahan . ',id_bahan',
+            'id_satuan'            => 'required|exists:satuans,id_satuan',
+            'masa_kadaluarsa_hari' => 'required|integer|min:1|max:3650',
         ], [
-            'nama_bahan.required' => 'Nama bahan wajib diisi.',
-            'nama_bahan.unique'   => 'Nama bahan sudah digunakan.',
-            'id_satuan.required'  => 'Satuan beli wajib dipilih.',
+            'nama_bahan.required'           => 'Nama bahan wajib diisi.',
+            'nama_bahan.unique'             => 'Nama bahan sudah digunakan.',
+            'id_satuan.required'            => 'Satuan beli wajib dipilih.',
+            'masa_kadaluarsa_hari.required' => 'Batas kadaluarsa normatif wajib diisi.',
+            'masa_kadaluarsa_hari.min'      => 'Batas kadaluarsa minimal 1 hari.',
         ]);
 
         $bahan->update([
-            'nama_bahan' => $request->nama_bahan,
-            'id_satuan'  => $request->id_satuan,
+            'nama_bahan'           => $request->nama_bahan,
+            'id_satuan'            => $request->id_satuan,
+            'masa_kadaluarsa_hari' => $request->masa_kadaluarsa_hari,
         ]);
 
         return redirect()->route('bahan.index')->with('success', 'Master bahan berhasil diperbarui.');
